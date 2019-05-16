@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.utils.html import strip_tags
 # Create your views here.
-import re
-from django.utils.html import escape
+from django.contrib.auth.decorators import login_required
 
 
+@login_required(login_url='login')
 def home_view(request):
     return render(request, 'index.html', {})
 
@@ -41,3 +41,9 @@ def login_view(request):
         form = AuthenticationForm()
     context = {'form': []}
     return render(request, 'login/login.html', context)
+
+
+def logout_view(request):
+    logout(request)
+    messages.warning(request, 'You have been logged out')
+    return redirect('login')
