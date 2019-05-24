@@ -20,6 +20,7 @@ def register_view(request):
             messages.success(request, 'Account created for {}'.format(request.POST['username']))
             return redirect('login')
         else:
+            mess = list(form.errors.get_json_data().values())
             messages.error(request, mess[0][0]['message'])
     else:
         form = UserCreationForm()
@@ -37,7 +38,6 @@ def login_view(request):
             return redirect('homepage')
         else:
             mess = list(form.errors.get_json_data().values())
-            # print(mess[0][0]['message'])
             messages.error(request, mess[0][0]['message'])
     else:
         form = AuthenticationForm()
