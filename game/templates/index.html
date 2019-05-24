@@ -105,7 +105,8 @@
 
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Place for the game</h1>
+            <h1 class="h3 mb-0 text-gray-800">Place for the game</h1> </br>
+            <canvas id="game-canvas" height ="600" width="600"></canvas>
             
           </div>
         </div>
@@ -154,6 +155,8 @@
     </div>
   </div>
 
+{% load static %}
+  <script src="{% static 'js/game.js' %}"></script>
 
 </body>
 {%endblock%}
