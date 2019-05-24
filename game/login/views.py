@@ -20,7 +20,8 @@ def register_view(request):
             messages.success(request, 'Account created for {}'.format(request.POST['username']))
             return redirect('login')
         else:
-            messages.error(request, form.errors)
+            mess = list(form.errors.get_json_data().values())
+            messages.error(request, mess[0][0]['message'])
     else:
         form = UserCreationForm()
     context = {'form': form}
@@ -36,10 +37,11 @@ def login_view(request):
             login(request, form.get_user())
             return redirect('homepage')
         else:
-            messages.error(request, list(form.error_messages.values()))
+            mess = list(form.errors.get_json_data().values())
+            messages.error(request, mess[0][0]['message'])
     else:
         form = AuthenticationForm()
-    context = {'form': []}
+    context = {'form': form}
     return render(request, 'login/login.html', context)
 
 
