@@ -23,7 +23,6 @@ function draw() {
 
   // Draw players
   for (var key in PLAYERS) {
-    console.log('player, ' + key);
     player = PLAYERS[key];
     ctx.fillStyle = PLAYER_COLORS[player.color]
     ctx.strokeStyle = PLAYER_COLORS[player.color]
@@ -34,7 +33,6 @@ function draw() {
 
     for(i = player.trail.length - 1; 0 <= i; --i){
       let position = player.trail[i];
-      console.log(position);
       ctx.lineTo(position.x, position.y);
     }
     ctx.stroke();

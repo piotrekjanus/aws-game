@@ -56,9 +56,6 @@ export class State extends Schema {
     @type({ map: Player })
     players = new MapSchema<Player>();
 
-    @type("boolean")
-    isRunning = false;
-
     createPlayer (id: string) {
         this.players[ id ] = new Player();
     }
@@ -72,11 +69,22 @@ export class State extends Schema {
     }
 }
 
+enum GameState{
+    WaitingForPlayers,
+    Countdown,
+    Game,
+    GameOver,
+}
+
 export class StateHandlerRoom extends Room<State> {
 
-    numberOfPlayers = 0;
-    frame = 0;
+    maxClients = 2;
+    increaseTrailIter = 0;
     trailIncreaseInterval = 20;
+    gamestate = GameState.WaitingForPlayers;
+    countdown = 3;
+    countdownInterval = 100;
+    countdownIter = 0;
 
     onInit (options) {
         console.log("StateHandlerRoom created!", options);
@@ -85,26 +93,37 @@ export class StateHandlerRoom extends Room<State> {
     }
 
     update (deltaTime) {
-        if( this.state.isRunning){
+        if( this.gameState == GameState.Countdown){
+            if( this.countdownIter % this.countdownInterval  == 0){
+                if( this.countdown < 0){
+                    this.gameState = GameState.Game;
+                } else {
+                    console.log('countdown : ' + this.countdown);
+                    this.broadcast({countdown : this.countdown});
+                    this.countdown -= 1;
+                }
+            }
+            this.countdownIter += 1;
+        } else if( this.gameState == GameState.Game){
             Object.keys(this.state.players).forEach(function (key){
                 let player = this.state.players[key];
-                if(this.frame % 20 == 0){
+                if(this.increaseTrailIter % this.trailIncreaseInterval == 0){
                     player.increaseTrail();
-                    this.frame = 0;
+                    this.increaseTrailIter = 0;
                 }
                 let newX = player.x + player.direction_x;
                 let newY = player.y + player.direction_y;
-                // let intersectionsExits = this.checkIntersections(newX, newY, player.x, player.y);
+                let intersectionsExits = this.checkIntersections(newX, newY, player.x, player.y);
                 player.x = newX;
                 player.y = newY;
-                /*
-                let outOfBounts = this.checkIfOutOfBounds(player);
-                if(intersecionsExists || outOfBounds){
-                    this.state.isRunning = false;
+                let outOfBounds = this.checkIfOutOfBounds(player.x, player.y);
+                if(intersectionsExits || outOfBounds){
+                    console.log("GAME OVER!!")
+                    this.gameState = GameState.GameOver;
+                    this.sendResults(player);
                 }
-                */
             }.bind(this));
-            this.frame += 1;
+            this.increaseTrailIter += 1;
         }
     }    
 
@@ -112,35 +131,34 @@ export class StateHandlerRoom extends Room<State> {
         let newLine = new Line(x1, y1, x2, y2);
         let intersects = false;
         Object.keys(this.state.players).forEach(function (key){
-            console.log('keyy ' + key);
             // some previous line already intersected
-            let player = this.state.players[key];
-            if( intersects  || player.trail == null){
+            if( intersects){
                 return;
             }
             // check for latest collision
-            /*
+            let player = this.state.players[key];
             if( key != playerId && player.trail.length > 0){
                 let lastPos = player.trail[player.trail.length - 1];
-                currLine = new Line(player.x, player.y, lastPos.x, lastPos.y);
+                let currLine = new Line(player.x, player.y, lastPos.x, lastPos.y);
                 if(isIntersect(newLine, currLine)){
+                    console.log("latest collision");
                     intersects = true;
                     return;
                 }
             }
-            */
 
             // check for collision with rest of the trail
             for(let i = 0; i < player.trail.length - 1; ++i){
                 let lineBegin = player.trail[i];
                 let lineEnd = player.trail[i + 1];
-                currLine = new Line(lineBegin.x, lineBegin.y, lineEnd.x, lineEnd.y);
+                let currLine = new Line(lineBegin.x, lineBegin.y, lineEnd.x, lineEnd.y);
                 if(isIntersect(newLine, currLine)){
+                    console.log("trail collision");
                     intersects = true;
                     return;
                 }
             }
-        }.bind(this, newLine, playerId, intersects));
+        }.bind(this));
         return intersects;
     }
 
@@ -148,15 +166,24 @@ export class StateHandlerRoom extends Room<State> {
         return ( x < 0 || x > 600 || y < 0 || y > 600)
     }
 
+    sendResults(looser){
+        // maybe change to sendMessage( won / lost)
+        this.broadcast({gameResults : looser.sessionId});
+    }
+
+    requestJoin (options, isNewRoom: boolean) {
+        return (options.create)
+            ? (options.create && isNewRoom)
+            : this.clients.length > 0;
+    }
+
     onJoin (client) {
-        // TODO Matchmaking
         this.state.createPlayer(client.sessionId);
-        this.numberOfPlayers += 1;
-        if(this.numberOfPlayers == 2){
-            this.state.isRunning = true;
+        if(this.clients.length == 2){
+            this.gameState = GameState.Countdown
         }
     }
- 
+
     onLeave (client) {
         this.state.removePlayer(client.sessionId);
     }
@@ -169,5 +196,4 @@ export class StateHandlerRoom extends Room<State> {
     onDispose () {
         console.log("Dispose StateHandlerRoom");
     }
-
 }

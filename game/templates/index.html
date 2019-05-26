@@ -104,9 +104,22 @@
         <div class="container-fluid">
 
           <!-- Page Heading -->
+          <button onclick="joinSpecificRoom()">Join room</button>
+          <textarea id="join_room_name_input" rows="1">room name</textarea> </br>
+          <button onclick="createNewRoom()">Create new room</button> </br>
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
+
             <canvas id="canvas" height ="600" width="600"></canvas>
-            
+            <table id = "rooms_table" style="width:100%">
+              <thead>
+                <tr>
+                  <th>RoomId</th>
+                  <th>Num of Players</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
           </div>
         </div>
         <!-- /.container-fluid -->
