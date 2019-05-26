@@ -105,8 +105,7 @@
 
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Place for the game</h1> </br>
-            <canvas id="game-canvas" height ="600" width="600"></canvas>
+            <canvas id="canvas" height ="600" width="600"></canvas>
             
           </div>
         </div>
@@ -156,7 +155,8 @@
   </div>
 
 {% load static %}
-  <script src="{% static 'node/socket.io.js' %}"></script>
+  <script src="{% static 'js/draw.js' %}"></script>
+  <script src="{% static 'colyseus/colyseus.js' %}"></script>
   <script src="{% static 'js/game.js' %}"></script>
 
 </body>

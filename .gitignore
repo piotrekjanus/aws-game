@@ -3,3 +3,4 @@
 game/db.sqlite3
 game/db.sqlite3
 game_server/node_modules
+colyseus-examples/node_modules
