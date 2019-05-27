@@ -1,0 +1,30 @@
+{% extends "index.html" %}
+
+{% block container %}
+<div class="container-fluid h-75">
+    <div class="row mx-auto">
+        <table class='table' id = "game_stats">
+            <thead class="thead-dark">
+            <tr>
+                <th>Date</th>
+                <th>Against</th>
+                <th>Winner</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for item in obj %}
+                <tr>
+                    <th>{{item.date}}</th>
+                    {% if user == item.player_1|stringformat:"s" %}
+                    <th>{{item.player_2}}</th>
+                    {% else %}
+                    <th>{{item.player_1}}</th>
+                    {% endif %}
+                    <th>{{item.winner}}</th>
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>  
+    </div>
+</div>
+{% endblock %}
