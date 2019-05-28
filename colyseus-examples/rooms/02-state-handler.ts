@@ -81,7 +81,7 @@ export class StateHandlerRoom extends Room<State> {
     maxClients = 2;
     increaseTrailIter = 0;
     trailIncreaseInterval = 20;
-    gamestate = GameState.WaitingForPlayers;
+    gameState = GameState.WaitingForPlayers;
     countdown = 3;
     countdownInterval = 100;
     countdownIter = 0;
@@ -113,11 +113,12 @@ export class StateHandlerRoom extends Room<State> {
                 }
                 let newX = player.x + player.direction_x;
                 let newY = player.y + player.direction_y;
-                let intersectionsExits = this.checkIntersections(newX, newY, player.x, player.y);
+                // let intersectionsExist = this.checkIntersections(newX, newY, player.x, player.y);
+                let intersectionsExist = false;
                 player.x = newX;
                 player.y = newY;
                 let outOfBounds = this.checkIfOutOfBounds(player.x, player.y);
-                if(intersectionsExits || outOfBounds){
+                if(intersectionsExist || outOfBounds){
                     console.log("GAME OVER!!")
                     this.gameState = GameState.GameOver;
                     this.sendResults(player);
