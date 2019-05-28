@@ -7,11 +7,6 @@ from django.utils.html import strip_tags
 from django.contrib.auth.decorators import login_required
 
 
-@login_required(login_url='login')
-def home_view(request):
-    return render(request, 'index.html', {})
-
-
 def register_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
