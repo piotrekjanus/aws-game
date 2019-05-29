@@ -1,4 +1,6 @@
 export class Point {
+   x = 0
+   y = 0
    constructor(x : number, y : number){
        this.x = x;
        this.y = y;
@@ -6,6 +8,8 @@ export class Point {
 }
 
 export class Line {
+   p1
+   p2
    constructor(x1 : number, y1 : number, x2 : number, y2 : number){
        this.p1 = new Point(x1, y1);
        this.p2 = new Point(x2, y2);

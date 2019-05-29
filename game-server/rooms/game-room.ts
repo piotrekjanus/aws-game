@@ -99,7 +99,7 @@ export class GameRoom extends Room<State> {
                     this.gameState = GameState.Game;
                 } else {
                     console.log('countdown : ' + this.countdown);
-                    this.broadcast({countdown : this.countdown});
+                    this.broadcast({isCountdown : true, countdown : this.countdown});
                     this.countdown -= 1;
                 }
             }
@@ -113,8 +113,8 @@ export class GameRoom extends Room<State> {
                 }
                 let newX = player.x + player.direction_x;
                 let newY = player.y + player.direction_y;
-                // let intersectionsExist = this.checkIntersections(newX, newY, player.x, player.y);
-                let intersectionsExist = false;
+                let intersectionsExist = this.checkIntersections(newX, newY, player.x, player.y, key);
+                // let intersectionsExist = false;
                 player.x = newX;
                 player.y = newY;
                 let outOfBounds = this.checkIfOutOfBounds(player.x, player.y);
@@ -133,32 +133,27 @@ export class GameRoom extends Room<State> {
         let intersects = false;
         Object.keys(this.state.players).forEach(function (key){
             // some previous line already intersected
-            if( intersects){
+            if( intersects || playerId == key){
                 return;
             }
-            // check for latest collision
-            let player = this.state.players[key];
-            if( key != playerId && player.trail.length > 0){
-                let lastPos = player.trail[player.trail.length - 1];
-                let currLine = new Line(player.x, player.y, lastPos.x, lastPos.y);
-                if(isIntersect(newLine, currLine)){
-                    console.log("latest collision");
-                    intersects = true;
-                    return;
-                }
-            }
 
-            // check for collision with rest of the trail
-            for(let i = 0; i < player.trail.length - 1; ++i){
-                let lineBegin = player.trail[i];
-                let lineEnd = player.trail[i + 1];
-                let currLine = new Line(lineBegin.x, lineBegin.y, lineEnd.x, lineEnd.y);
-                if(isIntersect(newLine, currLine)){
-                    console.log("trail collision");
-                    intersects = true;
-                    return;
+            let player = this.state.players[key];
+            for(let i = 0; i < player.trail.length - 1; i++ ){
+                let start = player.trail[i];
+                let stop = player.trail[i + 1];
+                let trailLine = new Line(start.x, start.y , stop.x, stop.y);
+                intersects = intersects || isIntersect(trailLine, newLine);
+                if( intersects ){
+                    console.log('intersects debug')
+                    console.log(key)
+                    console.log(playerId)
+                    console.log(newLine.p1.x + ' ' + newLine.p1.y + ' ' + newLine.p2.x + ' ' + newLine.p2.y)
+                    console.log(trailLine.p1.x + ' ' + trailLine.p1.y + ' ' + trailLine.p2.x + ' ' + trailLine.p2.y)
+                    console.log('intersects debug - end')
+
                 }
             }
+            
         }.bind(this));
         return intersects;
     }

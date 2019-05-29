@@ -26,8 +26,7 @@ function addHandlers(room){
     }
 
     room.onMessage.add( function (message){
-      if(message.countdown){
-        // todo, display countdown
+      if(message.isCountdown){
         let current = message.countdown;
         console.log('countdown: ' +  (current==1));
         CountDown(current);
@@ -49,7 +48,11 @@ function addHandlers(room){
 
 function CountDown(number){
     let counter = document.getElementById("counter");
-    counter.innerText = number;
+    if(number == 0){
+      counter.innerText = 'GO!';
+    } else{
+      counter.innerText = number;
+    }
 }
 
 function joinRoomInTable(roomId){

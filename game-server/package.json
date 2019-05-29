@@ -7,7 +7,8 @@
     "start": "nodemon --watch '**/*.ts' --exec ts-node index.ts",
     "bundle-colyseus-client": "browserify ./node_modules/colyseus.js/lib/index.js -s Colyseus -o static/colyseus.js",
     "build": "npm run bundle-colyseus-client",
-    "heroku-postbuild": "npm run build"
+    "heroku-postbuild": "npm run build",
+    "test": "nodemon --watch '**/*.ts' --exec ts-node tests.ts"
   },
   "engines": {
     "node": "8.9.1"
