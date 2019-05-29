@@ -177,9 +177,9 @@ export class GameRoom extends Room<State> {
     sendResults(looser){
         for(let i = 0; i < this.clients.length; i ++){
             if( this.clients[i].sessionId == looser){
-                this.send(this.clients[i], {gameResults : 'you lost'})
+                this.send(this.clients[i], {gameResults : 'looser' })
             } else{
-                this.send(this.clients[i], {gameResults : 'you won'})
+                this.send(this.clients[i], {gameResults : 'winner' })
             }
         }
     }

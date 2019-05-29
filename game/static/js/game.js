@@ -6,6 +6,7 @@ var client = new Colyseus.Client("ws://localhost:6969");
 
 var room;
 
+
 function addHandlers(room){
 
   room.onJoin.add(function() {
@@ -14,6 +15,7 @@ function addHandlers(room){
     room.state.players.onAdd = function(player, sessionId) {
       // listen to patches coming from the server
       console.log('new player!' + player);
+      console.log(logged_user);
       PLAYERS[sessionId] = player;
     }
 
@@ -28,6 +30,7 @@ function addHandlers(room){
     room.onMessage.add( function (message){
       if(message.isCountdown){
         let current = message.countdown;
+        
         console.log('countdown: ' +  (current==1));
         CountDown(current);
         
@@ -35,8 +38,8 @@ function addHandlers(room){
         // TODO, display results
         // message.gameResults == loser id (client.id is a thing or something like that)
         console.log('GAME OVER!');
-        console.log(message.gameResults);
-        console.log(client.id);
+        getScore(message.gameResults, client.id);
+        console.log();
       }
       else{
         CountDown('');
@@ -54,6 +57,23 @@ function CountDown(number){
     } else{
       counter.innerText = number;
     }
+}
+
+function getScore(message, id){
+  $(document).ready(function () {
+    //your code here
+  console.log(message)
+  $.ajax({
+    url: "/page/",
+    type: "POST",
+    data: {info: message, idd: id},
+    success:function(response){},
+    complete:function(){},
+    error:function (xhr, textStatus, thrownError){
+        alert("error doing something");
+    }
+  });
+});
 }
 
 function joinRoomInTable(roomId){
@@ -78,6 +98,7 @@ function createNewRoom(){
     addHandlers(room);
   }
 }
+
 
 function updateRooms(){
 
