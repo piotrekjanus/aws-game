@@ -36,6 +36,7 @@ function addHandlers(room){
         // message.gameResults == loser id (client.id is a thing or something like that)
         console.log('GAME OVER!');
         console.log(message.gameResults);
+        console.log(client.id);
       }
       else{
         CountDown('');

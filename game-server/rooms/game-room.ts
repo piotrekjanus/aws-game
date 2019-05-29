@@ -109,7 +109,6 @@ export class GameRoom extends Room<State> {
                 let player = this.state.players[key];
                 if(this.increaseTrailIter % this.trailIncreaseInterval == 0){
                     player.increaseTrail();
-                    this.increaseTrailIter = 0;
                 }
                 let newX = player.x + player.direction_x;
                 let newY = player.y + player.direction_y;
@@ -121,10 +120,14 @@ export class GameRoom extends Room<State> {
                 if(intersectionsExist || outOfBounds){
                     console.log("GAME OVER!!")
                     this.gameState = GameState.GameOver;
-                    this.sendResults(player);
+                    this.sendResults(key);
                 }
             }.bind(this));
-            this.increaseTrailIter += 1;
+            if(this.increaseTrailIter >= this.trailIncreaseInterval){
+                this.increaseTrailIter = 0;
+            } else{
+                this.increaseTrailIter += 1;
+            }
         }
     }    
 
@@ -138,6 +141,16 @@ export class GameRoom extends Room<State> {
             }
 
             let player = this.state.players[key];
+
+            if( player.trail.length > 0 ){
+                let start = player.trail[player.trail.length - 1];
+                let trailLine = new Line(start.x, start.y , player.x, player.y);
+                intersects = intersects || isIntersect(trailLine, newLine);
+                if( intersects){
+                    return;
+                }
+            }
+
             for(let i = 0; i < player.trail.length - 1; i++ ){
                 let start = player.trail[i];
                 let stop = player.trail[i + 1];
@@ -150,7 +163,6 @@ export class GameRoom extends Room<State> {
                     console.log(newLine.p1.x + ' ' + newLine.p1.y + ' ' + newLine.p2.x + ' ' + newLine.p2.y)
                     console.log(trailLine.p1.x + ' ' + trailLine.p1.y + ' ' + trailLine.p2.x + ' ' + trailLine.p2.y)
                     console.log('intersects debug - end')
-
                 }
             }
             
@@ -163,8 +175,13 @@ export class GameRoom extends Room<State> {
     }
 
     sendResults(looser){
-        // maybe change to sendMessage( won / lost)
-        this.broadcast({gameResults : looser.sessionId});
+        for(let i = 0; i < this.clients.length; i ++){
+            if( this.clients[i].sessionId == looser){
+                this.send(this.clients[i], {gameResults : 'you lost'})
+            } else{
+                this.send(this.clients[i], {gameResults : 'you won'})
+            }
+        }
     }
 
     requestJoin (options, isNewRoom: boolean) {
