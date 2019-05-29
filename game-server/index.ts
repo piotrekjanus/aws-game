@@ -5,7 +5,7 @@ import { createServer } from 'http';
 import { Server } from 'colyseus';
 
 // Import demo room handlers
-import { StateHandlerRoom } from "./rooms/02-state-handler";
+import { GameRoom } from "./rooms/game-room";
 
 const port = Number(process.env.PORT || 6969);
 const app = express();
@@ -16,7 +16,7 @@ const gameServer = new Server({
 });
 
 // Register StateHandlerRoom as "state_handler"
-gameServer.register("state_handler", StateHandlerRoom);
+gameServer.register("state_handler", GameRoom);
 
 gameServer.onShutdown(function(){
   console.log(`game server is going down.`);

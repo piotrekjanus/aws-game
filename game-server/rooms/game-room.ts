@@ -76,7 +76,7 @@ enum GameState{
     GameOver,
 }
 
-export class StateHandlerRoom extends Room<State> {
+export class GameRoom extends Room<State> {
 
     maxClients = 2;
     increaseTrailIter = 0;
