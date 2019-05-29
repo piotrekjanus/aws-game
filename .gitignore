@@ -4,3 +4,11 @@ game/db.sqlite3
 game/db.sqlite3
 game-server/node_modules
 colyseus-examples/node_modules
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+.eb-virt/*
+eb-virt/*
+eb-virt/
+game-server/package-lock.json
