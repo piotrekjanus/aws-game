@@ -34,6 +34,15 @@ export class Player extends Schema {
     @type([Position])
     trail = new ArraySchema<Position>();
 
+    @type("string")
+    username = "unknown";
+
+    constructor(username : string){
+        super();
+        console.log('creating player : ', username);
+        this.username = username;
+    }
+
     increaseTrail(){
         this.trail.push( new Position(this.x, this.y) );
     }
@@ -56,8 +65,8 @@ export class State extends Schema {
     @type({ map: Player })
     players = new MapSchema<Player>();
 
-    createPlayer (id: string) {
-        this.players[ id ] = new Player();
+    createPlayer (id: string, username) {
+        this.players[ id ] = new Player(username);
     }
 
     removePlayer (id: string) {
@@ -190,8 +199,8 @@ export class GameRoom extends Room<State> {
             : this.clients.length > 0;
     }
 
-    onJoin (client) {
-        this.state.createPlayer(client.sessionId);
+    onJoin (client, options) {
+        this.state.createPlayer(client.sessionId, options.username);
         if(this.clients.length == 2){
             this.gameState = GameState.Countdown
         }
@@ -202,11 +211,11 @@ export class GameRoom extends Room<State> {
     }
 
     onMessage (client, data) {
-        console.log("StateHandlerRoom received message from", client.sessionId, ":", data);
+        console.log("GameRoom received message from", client.sessionId, ":", data);
         this.state.changeDirection(client.sessionId, data.direction);
     }
 
     onDispose () {
-        console.log("Dispose StateHandlerRoom");
+        console.log("Dispose GameRoom");
     }
 }

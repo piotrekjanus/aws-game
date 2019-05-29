@@ -16,7 +16,7 @@ const gameServer = new Server({
 });
 
 // Register StateHandlerRoom as "state_handler"
-gameServer.register("state_handler", GameRoom);
+gameServer.register("game-room", GameRoom);
 
 gameServer.onShutdown(function(){
   console.log(`game server is going down.`);

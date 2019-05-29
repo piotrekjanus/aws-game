@@ -15,7 +15,6 @@ function addHandlers(room){
     room.state.players.onAdd = function(player, sessionId) {
       // listen to patches coming from the server
       console.log('new player!' + player);
-      console.log(logged_user);
       PLAYERS[sessionId] = player;
     }
 
@@ -38,7 +37,10 @@ function addHandlers(room){
         // TODO, display results
         // message.gameResults == loser id (client.id is a thing or something like that)
         console.log('GAME OVER!');
-        getScore(message.gameResults, client.id);
+        usernames = Object.values(room.state.players).map(function(x){return x.username;});
+        console.log(usernames);
+        console.log(room.state.players)
+        getScore(message.gameResults);
         console.log();
       }
       else{
@@ -79,7 +81,7 @@ function getScore(message, id){
 function joinRoomInTable(roomId){
   if(!room){
     // let roomId = document.getElementById("join_room_name_input").value;
-    room = client.join(roomId);
+    room = client.join(roomId, {username: logged_user});
     addHandlers(room);
   }
 }
@@ -87,14 +89,14 @@ function joinRoomInTable(roomId){
 function joinSpecificRoom(){
   if(!room){
     let roomId = document.getElementById("join_room_name_input").value;
-    room = client.join(roomId);
+    room = client.join(roomId, {username: logged_user});
     addHandlers(room);
   }
 }
 
 function createNewRoom(){
   if(!room){
-    room = client.join("state_handler", { create: true });
+    room = client.join("game-room", { create: true, username: logged_user});
     addHandlers(room);
   }
 }
@@ -106,7 +108,7 @@ function updateRooms(){
     let oldTbody = document.getElementsByTagName('tbody')[0];
     // console.log(oldTbody);
     let newTbody = document.createElement('tbody');
-    client.getAvailableRooms('state_handler', function(rooms, err) {
+    client.getAvailableRooms('game-room', function(rooms, err) {
       rooms.forEach(function(room){
         // Insert a row at the end of the table
         let newRow = newTbody.insertRow(-1);
