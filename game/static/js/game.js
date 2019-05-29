@@ -6,6 +6,7 @@ var client = new Colyseus.Client("ws://localhost:6969");
 
 var room;
 
+
 function addHandlers(room){
 
   room.onJoin.add(function() {
@@ -28,6 +29,7 @@ function addHandlers(room){
     room.onMessage.add( function (message){
       if(message.isCountdown){
         let current = message.countdown;
+        
         console.log('countdown: ' +  (current==1));
         CountDown(current);
         
@@ -35,8 +37,11 @@ function addHandlers(room){
         // TODO, display results
         // message.gameResults == loser id (client.id is a thing or something like that)
         console.log('GAME OVER!');
-        console.log(message.gameResults);
-        console.log(client.id);
+        usernames = Object.values(room.state.players).map(function(x){return x.username;});
+        console.log(usernames);
+        console.log(room.state.players)
+        getScore(message.gameResults);
+        console.log();
       }
       else{
         CountDown('');
@@ -56,10 +61,27 @@ function CountDown(number){
     }
 }
 
+function getScore(message, id){
+  $(document).ready(function () {
+    //your code here
+  console.log(message)
+  $.ajax({
+    url: "/page/",
+    type: "POST",
+    data: {info: message, idd: id},
+    success:function(response){},
+    complete:function(){},
+    error:function (xhr, textStatus, thrownError){
+        alert("error doing something");
+    }
+  });
+});
+}
+
 function joinRoomInTable(roomId){
   if(!room){
     // let roomId = document.getElementById("join_room_name_input").value;
-    room = client.join(roomId);
+    room = client.join(roomId, {username: logged_user});
     addHandlers(room);
   }
 }
@@ -67,17 +89,18 @@ function joinRoomInTable(roomId){
 function joinSpecificRoom(){
   if(!room){
     let roomId = document.getElementById("join_room_name_input").value;
-    room = client.join(roomId);
+    room = client.join(roomId, {username: logged_user});
     addHandlers(room);
   }
 }
 
 function createNewRoom(){
   if(!room){
-    room = client.join("state_handler", { create: true });
+    room = client.join("game-room", { create: true, username: logged_user});
     addHandlers(room);
   }
 }
+
 
 function updateRooms(){
 
@@ -85,7 +108,7 @@ function updateRooms(){
     let oldTbody = document.getElementsByTagName('tbody')[0];
     // console.log(oldTbody);
     let newTbody = document.createElement('tbody');
-    client.getAvailableRooms('state_handler', function(rooms, err) {
+    client.getAvailableRooms('game-room', function(rooms, err) {
       rooms.forEach(function(room){
         // Insert a row at the end of the table
         let newRow = newTbody.insertRow(-1);
