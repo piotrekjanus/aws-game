@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 import datetime
-
+import json
 from django.contrib.auth.models import User
 
 @login_required(login_url='login')
@@ -31,18 +31,18 @@ def home_view(request):
     return render(request, 'index.html', {})
 
 @csrf_exempt
-def do_something(request):
+def get_match_result(request):
     if request.POST:
+        status = request.POST.getlist('info')[0]
+        users = json.loads( request.POST.getlist('users')[0])
         if request.user.is_authenticated:
             user_name = request.user.username
         result = Result()
+        print(user_name)
         result.date = datetime.datetime.utcnow()
-        result.player_1 = User.objects.get(username = user_name)
-        result.player_2 = User.objects.get(username = user_name)
-        if(request.POST.getlist('info') == 'winner'):
-            result.winner = User.objects.get(username = user_name)
-        else:
-            result.winner = User.objects.get(username = user_name)
-        result.save()
-    
-    return HttpResponse()
+        result.player_1 = User.objects.get(username=users[0])
+        result.player_2 = User.objects.get(username=users[1])
+        if(status == 'winner'):
+            result.winner = User.objects.get(username=user_name)
+            result.save()    
+    return render(request, 'index.html', {})

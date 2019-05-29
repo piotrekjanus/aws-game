@@ -40,7 +40,7 @@ function addHandlers(room){
         usernames = Object.values(room.state.players).map(function(x){return x.username;});
         console.log(usernames);
         console.log(room.state.players)
-        getScore(message.gameResults);
+        getScore(message.gameResults, usernames);
         console.log();
       }
       else{
@@ -55,22 +55,22 @@ function addHandlers(room){
 function CountDown(number){
     let counter = document.getElementById("counter");
     if(number == 0){
-      counter.innerText = 'GO!';
+      counter.innerText = '';
     } else{
       counter.innerText = number;
     }
 }
 
-function getScore(message, id){
+function getScore(message, players){
   $(document).ready(function () {
     //your code here
   console.log(message)
   $.ajax({
     url: "/page/",
     type: "POST",
-    data: {info: message, idd: id},
+    data: {info: message, users: JSON.stringify(players)},
     success:function(response){},
-    complete:function(){},
+    complete:  window.location.href = '/game/',
     error:function (xhr, textStatus, thrownError){
         alert("error doing something");
     }
