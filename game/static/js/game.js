@@ -63,16 +63,14 @@ function CountDown(number){
 
 function getScore(message, players){
   $(document).ready(function () {
-    //your code here
-  console.log(message)
   $.ajax({
-    url: "/page/",
+    url: "/results/",
     type: "POST",
     data: {info: message, users: JSON.stringify(players)},
     success:function(response){},
     complete:  window.location.href = '/game/',
     error:function (xhr, textStatus, thrownError){
-        alert("error doing something");
+        alert("Error while saving match results");
     }
   });
 });

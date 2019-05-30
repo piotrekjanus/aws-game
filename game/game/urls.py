@@ -28,5 +28,5 @@ urlpatterns = [
     path('stats/', stats_view, name='stats'),
     path('home/', home_view, name='homepage'),
     path('admin/', admin.site.urls),
-    path('page/', get_match_result, name='dupa')
+    path('results/', get_match_result, name='results')
 ]
