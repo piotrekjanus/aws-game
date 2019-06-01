@@ -38,12 +38,7 @@ function addHandlers(room){
       } else if(message.gameResults){
         // TODO, display results
         // message.gameResults == loser id (client.id is a thing or something like that)
-        console.log('GAME OVER!');
-        usernames = Object.values(room.state.players).map(function(x){return x.username;});
-        console.log(usernames);
-        console.log(room.state.players)
-        getScore(message.gameResults, usernames);
-        console.log();
+        GameOver(message.gameResults);
       }
       else{
         CountDown('');
@@ -55,12 +50,20 @@ function addHandlers(room){
 }
 
 function CountDown(number){
-    let counter = document.getElementById("counter");
-    if(number == 0){
-      counter.innerText = '';
-    } else{
-      counter.innerText = number;
-    }
+  let counter = document.getElementById("counter");
+  if(number == 0){
+    counter.innerText = '';
+  } else{
+    counter.innerText = number;
+  }
+}
+
+function GameOver(results){
+  console.log('GAME OVER!');
+  usernames = Object.values(room.state.players).map(function(x){return x.username;});
+  console.log(usernames);
+  console.log(room.state.players)
+  getScore(results, usernames);
 }
 
 function getScore(message, players){
@@ -98,6 +101,14 @@ function createNewRoom(){
   if(!room){
     room = client.join("game-room", { create: true, username: logged_user});
     addHandlers(room);
+  }
+}
+
+function quitGame(){
+  if(room){
+    room.leave();
+    room = null;
+    PLAYERS = {};
   }
 }
 

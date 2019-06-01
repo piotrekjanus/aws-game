@@ -137,6 +137,8 @@ export class GameRoom extends Room<State> {
             } else{
                 this.increaseTrailIter += 1;
             }
+        } else if( this.gameState == GameState.GameOver){
+            // Nothing
         }
     }    
 
@@ -145,13 +147,13 @@ export class GameRoom extends Room<State> {
         let intersects = false;
         Object.keys(this.state.players).forEach(function (key){
             // some previous line already intersected
-            if( intersects || playerId == key){
+            if( intersects ){
                 return;
             }
 
             let player = this.state.players[key];
 
-            if( player.trail.length > 0 ){
+            if( key != playerId && player.trail.length > 0 ){
                 let start = player.trail[player.trail.length - 1];
                 let trailLine = new Line(start.x, start.y , player.x, player.y);
                 intersects = intersects || isIntersect(trailLine, newLine);
@@ -163,6 +165,9 @@ export class GameRoom extends Room<State> {
             for(let i = 0; i < player.trail.length - 1; i++ ){
                 let start = player.trail[i];
                 let stop = player.trail[i + 1];
+                if( key == playerId && stop.x == player.x && stop.y == player.y){
+                    continue;
+                }
                 let trailLine = new Line(start.x, start.y , stop.x, stop.y);
                 intersects = intersects || isIntersect(trailLine, newLine);
                 if( intersects ){
