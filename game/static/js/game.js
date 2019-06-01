@@ -73,7 +73,6 @@ function getScore(message, players){
     type: "POST",
     data: {info: message, users: JSON.stringify(players)},
     success:function(response){},
-    complete:  window.location.href = '/game/',
     error:function (xhr, textStatus, thrownError){
         alert("Error while saving match results");
     }
