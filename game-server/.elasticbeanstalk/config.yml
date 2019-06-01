@@ -1,10 +1,20 @@
 branch-defaults:
   default:
-    environment: docker-2-dev
+    environment: gameserver-dev
     group_suffix: null
 global:
-  application_name: docker-2
+  application_name: gameserver
+  aws:autoscaling:launchconfiguration:
+    InstanceType: t2-micro
+  aws:elb:listener:80:
+    InstancePort: '80'
+    InstanceProtocol: TCP
+    ListenerEnabled: 'true'
+    ListenerProtocol: TCP
+    PolicyNames: null
+    SSLCertificateId: null
   branch: null
+  default_ec2_keyname: null
   default_platform: Docker 18.06.1-ce
   default_region: eu-central-1
   include_git_submodules: true
