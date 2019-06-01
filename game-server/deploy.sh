@@ -1,8 +1,11 @@
 #!/bin/bash
   
-yes n | eb init
-eb create --cfg gameserver gameserver-dev
-url=`aws elasticbeanstalk describe-environments --environment-names front-env \
+srv_name='gameserver'
+cfg_file='gameserver'
+
+yes n | eb init $srv_name > /dev/null
+eb create --cfg $cfg_file "${srv_name}-env"
+url=`aws elasticbeanstalk describe-environments --no-include-deleted --environment-names "${srv_name}-env" \
     --query "Environments[*].CNAME" --output text`
-echo "\nGameserver URL: $url"
+echo "Server \"${srv_name}\" URL: $url"
 

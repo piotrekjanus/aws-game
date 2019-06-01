@@ -1,7 +1,7 @@
-
+*.swp
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
-*.swp
 !.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/saved_configs/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 !.elasticbeanstalk/config.yml

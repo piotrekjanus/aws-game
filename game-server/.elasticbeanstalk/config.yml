@@ -1,6 +1,6 @@
 branch-defaults:
   default:
-    environment: gameserver-dev
+    environment: gameserver-env
     group_suffix: null
 global:
   application_name: gameserver
