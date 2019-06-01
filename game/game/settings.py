@@ -75,12 +75,12 @@ WSGI_APPLICATION = 'game.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-#DATABASES = {
+# DATABASES = {
 #    'default': {
 #        'ENGINE': 'django.db.backends.sqlite3',
 #        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #    }
-#}
+# }
 
 if 'RDS_HOSTNAME' in os.environ:
     DATABASES = {
@@ -93,6 +93,14 @@ if 'RDS_HOSTNAME' in os.environ:
             'PORT': os.environ['RDS_PORT'],
         }
     }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
     '/var/www/static/',
