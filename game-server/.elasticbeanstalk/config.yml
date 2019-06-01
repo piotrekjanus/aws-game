@@ -1,0 +1,17 @@
+branch-defaults:
+  default:
+    environment: docker-2-dev
+    group_suffix: null
+global:
+  application_name: docker-2
+  branch: null
+  default_platform: Docker 18.06.1-ce
+  default_region: eu-central-1
+  include_git_submodules: true
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: eb-cli
+  repository: null
+  sc: null
+  workspace_type: Application
