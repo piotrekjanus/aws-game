@@ -2,8 +2,9 @@
 var host = window.document.location.host.replace(/:.*/, '');
 var port = 6969
 // var client = new Colyseus.Client(location.protocol.replace("http", "ws") + host + ':' + port);
-//var client = new Colyseus.Client("ws://zatackabackend-env2.szmbencpim.eu-central-1.elasticbeanstalk.com/:6969");
-var client = new Colyseus.Client("ws://localhost:6969");
+//var client = new Colyseus.Client("ws://zatackabackend-env2.szmbencpim.eu-central-1.elasticbeanstalk.com:6969");
+//var client = new Colyseus.Client("ws://18.185.57.241:6969");
+var client = new Colyseus.Client("ws://gameserver-dev.8ph4hahm2d.eu-central-1.elasticbeanstalk.com:80");
 
 var room;
 
