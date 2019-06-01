@@ -12,9 +12,11 @@ import datetime
 import json
 from django.contrib.auth.models import User
 
+
 @login_required(login_url='login')
 def game_view(request):
     return render(request, 'tabs/game.html', {})
+
 
 @login_required(login_url='login')
 def stats_view(request):
@@ -27,9 +29,11 @@ def stats_view(request):
                    "user": username}
     return render(request, 'tabs/stats.html', context)
 
+
 @login_required(login_url='login')
 def home_view(request):
     return render(request, 'index.html', {})
+
 
 @csrf_exempt
 def get_match_result(request):
