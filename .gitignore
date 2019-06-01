@@ -4,6 +4,7 @@ game/db.sqlite3
 game/db.sqlite3
 game-server/node_modules
 colyseus-examples/node_modules
+game/npm-debug.log
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
