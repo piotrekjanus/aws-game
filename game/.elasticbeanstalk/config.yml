@@ -1,13 +1,16 @@
 branch-defaults:
   default:
-    environment: front-env
+    environment: djangoserver-env
     group_suffix: null
 environment-defaults:
+  djangoserver-dev:
+    branch: null
+    repository: null
   front-env:
     branch: null
     repository: null
 global:
-  application_name: zatacka_frontend
+  application_name: djangoserver
   branch: null
   default_ec2_keyname: null
   default_platform: Python 3.6

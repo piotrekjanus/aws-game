@@ -2,12 +2,10 @@
 var host = window.document.location.host.replace(/:.*/, '');
 var port = 6969
 // var client = new Colyseus.Client(location.protocol.replace("http", "ws") + host + ':' + port);
-//var client = new Colyseus.Client("ws://zatackabackend-env2.szmbencpim.eu-central-1.elasticbeanstalk.com/:6969");
 console.log('connecting to host: ' + config.game_host);
-var client = new Colyseus.Client("ws://" + config.game_host + ":6969");
+var client = new Colyseus.Client("ws://" + config.game_host);
 
 var room;
-
 
 function addHandlers(room){
 
