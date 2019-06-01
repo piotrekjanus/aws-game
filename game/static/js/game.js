@@ -2,12 +2,10 @@
 var host = window.document.location.host.replace(/:.*/, '');
 var port = 6969
 // var client = new Colyseus.Client(location.protocol.replace("http", "ws") + host + ':' + port);
-//var client = new Colyseus.Client("ws://zatackabackend-env2.szmbencpim.eu-central-1.elasticbeanstalk.com:6969");
-//var client = new Colyseus.Client("ws://18.185.57.241:6969");
-var client = new Colyseus.Client("ws://gameserver-dev.8ph4hahm2d.eu-central-1.elasticbeanstalk.com:80");
+console.log('connecting to host: ' + config.game_host);
+var client = new Colyseus.Client("ws://" + config.game_host);
 
 var room;
-
 
 function addHandlers(room){
 
@@ -65,16 +63,14 @@ function CountDown(number){
 
 function getScore(message, players){
   $(document).ready(function () {
-    //your code here
-  console.log(message)
   $.ajax({
-    url: "/page/",
+    url: "/results/",
     type: "POST",
     data: {info: message, users: JSON.stringify(players)},
     success:function(response){},
     complete:  window.location.href = '/game/',
     error:function (xhr, textStatus, thrownError){
-        alert("error doing something");
+        alert("Error while saving match results");
     }
   });
 });

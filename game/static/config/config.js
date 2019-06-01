@@ -1,0 +1,1 @@
+var config = {"game_host": "localhost"};
