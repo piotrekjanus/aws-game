@@ -41,6 +41,7 @@ def login_view(request):
 
 
 def logout_view(request):
-    logout(request)
+    if request.user.is_authenticated:
+        logout(request)
     messages.warning(request, 'You have been logged out')
     return redirect('login')
