@@ -2,12 +2,10 @@
 var host = window.document.location.host.replace(/:.*/, '');
 var port = 6969
 // var client = new Colyseus.Client(location.protocol.replace("http", "ws") + host + ':' + port);
-//var client = new Colyseus.Client("ws://zatackabackend-env2.szmbencpim.eu-central-1.elasticbeanstalk.com/:6969");
 console.log('connecting to host: ' + config.game_host);
-var client = new Colyseus.Client("ws://" + config.game_host + ":6969");
+var client = new Colyseus.Client("ws://" + config.game_host);
 
 var room;
-
 
 function addHandlers(room){
 
@@ -18,6 +16,7 @@ function addHandlers(room){
       // listen to patches coming from the server
       console.log('new player!' + player);
       PLAYERS[sessionId] = player;
+      updatePlayerInfo(PLAYERS);
     }
 
     room.state.players.onRemove = function(player, sessionId) {
@@ -145,6 +144,29 @@ function updateRooms(){
 
     oldTbody.parentNode.replaceChild(newTbody, oldTbody);
   }
+}
+
+function updatePlayerInfo(PLAYERS)
+{
+  let oldTbody = document.getElementsByClassName('player_table')[0];
+  let newTbody = document.createElement('tbody');
+  newTbody.className += "player_table";
+  for (var key in PLAYERS) {
+      player = PLAYERS[key];
+      let newRow = newTbody.insertRow(-1);
+      let newCell = newRow.insertCell(0);
+      let newText = document.createTextNode(player.username);
+      newCell.appendChild(newText);
+      newCell = newRow.insertCell(1);
+      // td.style.backgroundColor='#FF8000'
+      newCell.style.backgroundColor = PLAYER_COLORS[player.color]
+      // newText = document.createTextNode(PLAYER_COLORS[player.color]);      
+      // newCell.appendChild(newText);
+  
+    player = PLAYERS[key];
+    console.log(player);
+  };
+  oldTbody.parentNode.replaceChild(newTbody, oldTbody);
 }
 
 window.setInterval(updateRooms, 1000);

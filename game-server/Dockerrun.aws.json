@@ -1,0 +1,29 @@
+{
+  "AWSEBDockerrunVersion": 1,
+  "volumes": [
+    {
+      "name": "gameserver-app",
+      "host": {
+        "sourcePath": "/usr/src/app"
+      }
+    }
+  ],
+  "containerDefinitions": [
+    {
+      "name": "gameserver-app",
+      "essential": true,
+      "portMappings": [
+        {
+          "hostPort": 6969,
+          "containerPort": 6969
+        }
+      ]
+    }
+  ],
+  "Ports": [
+    {
+      "ContainerPort": "6969"
+    }
+  ]
+}
+

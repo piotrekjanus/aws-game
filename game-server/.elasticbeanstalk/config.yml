@@ -1,0 +1,27 @@
+branch-defaults:
+  default:
+    environment: gameserver-env
+    group_suffix: null
+global:
+  application_name: gameserver
+  aws:autoscaling:launchconfiguration:
+    InstanceType: t2-micro
+  aws:elb:listener:80:
+    InstancePort: '80'
+    InstanceProtocol: TCP
+    ListenerEnabled: 'true'
+    ListenerProtocol: TCP
+    PolicyNames: null
+    SSLCertificateId: null
+  branch: null
+  default_ec2_keyname: null
+  default_platform: Docker 18.06.1-ce
+  default_region: eu-central-1
+  include_git_submodules: true
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: eb-cli
+  repository: null
+  sc: null
+  workspace_type: Application
