@@ -16,11 +16,12 @@ function addHandlers(room){
       // listen to patches coming from the server
       console.log('new player!' + player);
       PLAYERS[sessionId] = player;
-      updatePlayerInfo(PLAYERS);
+      updatePlayerInfo();
     }
 
     room.state.players.onRemove = function(player, sessionId) {
       delete PLAYERS[sessionId];
+      updatePlayerInfo();
     }
 
     room.state.players.onChange = function (player, sessionId) {
@@ -62,7 +63,7 @@ function GameOver(results){
   usernames = Object.values(room.state.players).map(function(x){return x.username;});
   console.log(usernames);
   console.log(room.state.players)
-  getScore(results, usernames);
+  // getScore(results, usernames);
 }
 
 function getScore(message, players){
@@ -72,7 +73,7 @@ function getScore(message, players){
     type: "POST",
     data: {info: message, users: JSON.stringify(players)},
     success:function(response){},
-    complete:  window.location.href = '/game/',
+    complete:window.location.href = '/game/',
     error:function (xhr, textStatus, thrownError){
         alert("Error while saving match results");
     }
@@ -108,6 +109,7 @@ function quitGame(){
     room.leave();
     room = null;
     PLAYERS = {};
+    updatePlayerInfo();
   }
 }
 
@@ -146,22 +148,22 @@ function updateRooms(){
   }
 }
 
-function updatePlayerInfo(PLAYERS)
+function updatePlayerInfo()
 {
   let oldTbody = document.getElementsByClassName('player_table')[0];
   let newTbody = document.createElement('tbody');
   newTbody.className += "player_table";
   for (var key in PLAYERS) {
-      player = PLAYERS[key];
-      let newRow = newTbody.insertRow(-1);
-      let newCell = newRow.insertCell(0);
-      let newText = document.createTextNode(player.username);
-      newCell.appendChild(newText);
-      newCell = newRow.insertCell(1);
-      // td.style.backgroundColor='#FF8000'
-      newCell.style.backgroundColor = PLAYER_COLORS[player.color]
-      // newText = document.createTextNode(PLAYER_COLORS[player.color]);      
-      // newCell.appendChild(newText);
+    player = PLAYERS[key];
+    let newRow = newTbody.insertRow(-1);
+    let newCell = newRow.insertCell(0);
+    let newText = document.createTextNode(player.username);
+    newCell.appendChild(newText);
+    newCell = newRow.insertCell(1);
+    // td.style.backgroundColor='#FF8000'
+    newCell.style.backgroundColor = PLAYER_COLORS[player.color]
+    // newText = document.createTextNode(PLAYER_COLORS[player.color]);      
+    // newCell.appendChild(newText);
   
     player = PLAYERS[key];
     console.log(player);
@@ -171,25 +173,46 @@ function updatePlayerInfo(PLAYERS)
 
 window.setInterval(updateRooms, 1000);
 
+var steeringInterval;
+var steeringIntervalTime = 60;
+var isSteering = false;
+
 // controls
 window.addEventListener("keydown", function (e) {
-
-if (e.which === 39) {
-  right();
-} else if (e.which === 37) {
-  left();
-}
-
+  if( e.repeat ){
+    return;
+  }
+  if (e.which === 39) {
+    startSteering(1);
+  } else if (e.which === 37) {
+    startSteering(-1);
+  }
 });
 
-function right () {
-  if( room ){
-    room.send({ direction: 1 });
+// controls
+window.addEventListener("keyup", function (e) {
+  if( e.repeat ){
+    return;
   }
+  if (e.which === 39 || e.which === 37) {
+    stopSteering();
+  }
+});
+
+function startSteering(direction){
+  if( isSteering ){
+    stopSteering(); 
+  }
+  isSteering = true;
+  steeringInterval = window.setInterval(function(){
+    if( room ){
+      room.send({ direction: direction });
+      console.log('turn turn');
+    }
+  }, steeringIntervalTime);
 }
 
-function left () {
-  if(room){
-    room.send({ direction: -1 })
-  }
+function stopSteering(){
+  clearInterval(steeringInterval);
+  isSteering = false;
 }

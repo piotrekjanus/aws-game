@@ -23,7 +23,7 @@ export class Player extends Schema {
     y = 100 + Math.floor(Math.random() * 400);
 
     @type("number")
-    color = Math.floor(Math.random() * 6);
+    color = 0;
 
     @type("number")
     direction_x = 0;
@@ -37,9 +37,10 @@ export class Player extends Schema {
     @type("string")
     username = "unknown";
 
-    constructor(username : string){
+    constructor(username : string, color : number){
         super();
         console.log('creating player : ', username);
+        this.color = color;
         this.username = username;
     }
 
@@ -66,7 +67,8 @@ export class State extends Schema {
     players = new MapSchema<Player>();
 
     createPlayer (id: string, username) {
-        this.players[ id ] = new Player(username);
+        let color = Object.keys(this.players).length;
+        this.players[ id ] = new Player(username, color);
     }
 
     removePlayer (id: string) {
@@ -199,9 +201,19 @@ export class GameRoom extends Room<State> {
     }
 
     requestJoin (options, isNewRoom: boolean) {
-        return (options.create)
-            ? (options.create && isNewRoom)
-            : this.clients.length > 0;
+        if(options.create && isNewRoom){
+            return true;
+        } else if(this.clients.length > 0 && !this.isAlreadyConnected(options.username)){
+            return true;
+        }
+        return false;
+    }
+
+    isAlreadyConnected(username){
+        console.log('is not already connected: ' + username);
+        return Object.values(this.state.players).some(function(player){
+            return player.username == username;
+        });
     }
 
     onJoin (client, options) {

@@ -1,1 +1,1 @@
-var config = {"game_host": "localhost"};
+var config = {"game_host": "localhost:6969"};
