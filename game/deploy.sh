@@ -24,7 +24,8 @@ done
 if [ "$counter" -eq "$max_loops" ]; then
     echo "Timeout! Enviroment creation failed"
 else
-    #TODO: update urls and call ed deploy
+    python3 django-config-gen.py --allowed_hosts "$url"
+    eb deploy #deploy once more to update ALLOWED HOSTS
     echo "Server \"${srv_name}\" URL: $url"
 fi
 
