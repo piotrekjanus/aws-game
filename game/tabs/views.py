@@ -49,8 +49,4 @@ def get_match_result(request):
         if(status == 'winner'):
             result.winner = User.objects.get(username=user_name)
             result.save()
-        return render(request, 'index.html', {})
-    elif request.GET:
-        return HttpResponse()
-    else:
-        return HttpResponse()
+    return HttpResponse()

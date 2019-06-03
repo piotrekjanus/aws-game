@@ -13,3 +13,4 @@ game/npm-debug.log
 eb-virt/*
 eb-virt/
 game-server/package-lock.json
+game/autoconfig.py

@@ -16,10 +16,12 @@ function addHandlers(room){
       // listen to patches coming from the server
       console.log('new player!' + player);
       PLAYERS[sessionId] = player;
+      updatePlayerInfo();
     }
 
     room.state.players.onRemove = function(player, sessionId) {
       delete PLAYERS[sessionId];
+      updatePlayerInfo();
     }
 
     room.state.players.onChange = function (player, sessionId) {
@@ -36,12 +38,7 @@ function addHandlers(room){
       } else if(message.gameResults){
         // TODO, display results
         // message.gameResults == loser id (client.id is a thing or something like that)
-        console.log('GAME OVER!');
-        usernames = Object.values(room.state.players).map(function(x){return x.username;});
-        console.log(usernames);
-        console.log(room.state.players)
-        getScore(message.gameResults, usernames);
-        console.log();
+        GameOver(message.gameResults);
       }
       else{
         CountDown('');
@@ -53,12 +50,20 @@ function addHandlers(room){
 }
 
 function CountDown(number){
-    let counter = document.getElementById("counter");
-    if(number == 0){
-      counter.innerText = '';
-    } else{
-      counter.innerText = number;
-    }
+  let counter = document.getElementById("counter");
+  if(number == 0){
+    counter.innerText = '';
+  } else{
+    counter.innerText = number;
+  }
+}
+
+function GameOver(results){
+  console.log('GAME OVER!');
+  usernames = Object.values(room.state.players).map(function(x){return x.username;});
+  console.log(usernames);
+  console.log(room.state.players)
+  getScore(results, usernames);
 }
 
 function getScore(message, players){
@@ -68,7 +73,6 @@ function getScore(message, players){
     type: "POST",
     data: {info: message, users: JSON.stringify(players)},
     success:function(response){},
-    complete:  window.location.href = '/game/',
     error:function (xhr, textStatus, thrownError){
         alert("Error while saving match results");
     }
@@ -96,6 +100,15 @@ function createNewRoom(){
   if(!room){
     room = client.join("game-room", { create: true, username: logged_user});
     addHandlers(room);
+  }
+}
+
+function quitGame(){
+  if(room){
+    room.leave();
+    room = null;
+    PLAYERS = {};
+    updatePlayerInfo();
   }
 }
 
@@ -134,27 +147,66 @@ function updateRooms(){
   }
 }
 
+function updatePlayerInfo()
+{
+  let oldTbody = document.getElementsByClassName('player_table')[0];
+  let newTbody = document.createElement('tbody');
+  newTbody.className += "player_table";
+  for (var key in PLAYERS) {
+    player = PLAYERS[key];
+    let newRow = newTbody.insertRow(-1);
+    let newCell = newRow.insertCell(0);
+    let newText = document.createTextNode(player.username);
+    newCell.appendChild(newText);
+    newCell = newRow.insertCell(1);
+    // td.style.backgroundColor='#FF8000'
+    newCell.style.backgroundColor = PLAYER_COLORS[player.color]
+    // newText = document.createTextNode(PLAYER_COLORS[player.color]);      
+    // newCell.appendChild(newText);
+  
+    player = PLAYERS[key];
+    console.log(player);
+  };
+  oldTbody.parentNode.replaceChild(newTbody, oldTbody);
+}
+
 window.setInterval(updateRooms, 1000);
+
+var steeringIntervals = {};
+var steeringIntervalTime = 60;
 
 // controls
 window.addEventListener("keydown", function (e) {
-
-if (e.which === 39) {
-  right();
-} else if (e.which === 37) {
-  left();
-}
-
+  if( e.repeat ){
+    return;
+  }
+  if (e.which === 39) {
+    startSteering(1);
+  } else if (e.which === 37) {
+    startSteering(-1);
+  }
 });
 
-function right () {
-  if( room ){
-    room.send({ direction: 1 });
+// controls
+window.addEventListener("keyup", function (e) {
+  if( e.repeat ){
+    return;
   }
+  if (e.which === 39){
+    stopSteering(1);
+  } else if(e.which === 37) {
+    stopSteering(-1);
+  }
+});
+
+function startSteering(direction){
+  steeringIntervals[direction] = window.setInterval(function(){
+    if( room ){
+      room.send({ direction: direction });
+    }
+  }, steeringIntervalTime);
 }
 
-function left () {
-  if(room){
-    room.send({ direction: -1 })
-  }
+function stopSteering(direction){
+  clearInterval(steeringIntervals[direction]);
 }
