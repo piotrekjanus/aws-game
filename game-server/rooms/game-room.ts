@@ -23,7 +23,7 @@ export class Player extends Schema {
     y = 100 + Math.floor(Math.random() * 400);
 
     @type("number")
-    color = Math.floor(Math.random() * 6);
+    color = 0;
 
     @type("number")
     direction_x = 0;
@@ -37,14 +37,26 @@ export class Player extends Schema {
     @type("string")
     username = "unknown";
 
-    constructor(username : string){
+    constructor(username : string, color : number){
         super();
         console.log('creating player : ', username);
+        this.color = color;
         this.username = username;
     }
 
     increaseTrail(){
         this.trail.push( new Position(this.x, this.y) );
+    }
+
+    clearTrace(){
+        this.trail = new ArraySchema<Position>();
+    }
+
+    resetPos(){
+        this.x = 100 + Math.floor(Math.random() * 400);
+        this.y = 100 + Math.floor(Math.random() * 400);
+        this.direction_x = 0;
+        this.direction_y = -1;
     }
 
     changeDirection(direction : number){
@@ -66,7 +78,12 @@ export class State extends Schema {
     players = new MapSchema<Player>();
 
     createPlayer (id: string, username) {
-        this.players[ id ] = new Player(username);
+        let players_arr = Object.values(this.players);
+        let color = 0;
+        if( players_arr.length > 0){
+            color = 1 - players_arr[0].color; // 1 or 0
+        }
+        this.players[ id ] = new Player(username, color);
     }
 
     removePlayer (id: string) {
@@ -99,6 +116,17 @@ export class GameRoom extends Room<State> {
         console.log("StateHandlerRoom created!", options);
         this.setSimulationInterval((deltaTime) => this.update(deltaTime));
         this.setState(new State());
+    }
+
+    restart(){
+        Object.values(this.state.players).forEach(function (player){
+            if( player.trail.length > 0){
+                player.clearTrace();
+                player.resetPos();                                
+            }
+        });
+        this.countdown = 3;
+        this.gameState = GameState.Countdown;
     }
 
     update (deltaTime) {
@@ -137,6 +165,8 @@ export class GameRoom extends Room<State> {
             } else{
                 this.increaseTrailIter += 1;
             }
+        } else if( this.gameState == GameState.GameOver){
+            // Nothing
         }
     }    
 
@@ -145,13 +175,13 @@ export class GameRoom extends Room<State> {
         let intersects = false;
         Object.keys(this.state.players).forEach(function (key){
             // some previous line already intersected
-            if( intersects || playerId == key){
+            if( intersects ){
                 return;
             }
 
             let player = this.state.players[key];
 
-            if( player.trail.length > 0 ){
+            if( key != playerId && player.trail.length > 0 ){
                 let start = player.trail[player.trail.length - 1];
                 let trailLine = new Line(start.x, start.y , player.x, player.y);
                 intersects = intersects || isIntersect(trailLine, newLine);
@@ -163,6 +193,9 @@ export class GameRoom extends Room<State> {
             for(let i = 0; i < player.trail.length - 1; i++ ){
                 let start = player.trail[i];
                 let stop = player.trail[i + 1];
+                if( key == playerId && stop.x == player.x && stop.y == player.y){
+                    continue;
+                }
                 let trailLine = new Line(start.x, start.y , stop.x, stop.y);
                 intersects = intersects || isIntersect(trailLine, newLine);
                 if( intersects ){
@@ -194,15 +227,25 @@ export class GameRoom extends Room<State> {
     }
 
     requestJoin (options, isNewRoom: boolean) {
-        return (options.create)
-            ? (options.create && isNewRoom)
-            : this.clients.length > 0;
+        if(options.create && isNewRoom){
+            return true;
+        } else if(this.clients.length > 0 && !this.isAlreadyConnected(options.username)){
+            return true;
+        }
+        return false;
+    }
+
+    isAlreadyConnected(username){
+        console.log('is already connected? : ' + username);
+        return Object.values(this.state.players).some(function(player){
+            return player.username == username;
+        });
     }
 
     onJoin (client, options) {
         this.state.createPlayer(client.sessionId, options.username);
         if(this.clients.length == 2){
-            this.gameState = GameState.Countdown
+            this.restart();
         }
     }
 

@@ -10,10 +10,7 @@
                 <button type="button" class="btn btn-primary" onclick="createNewRoom()">Create new room</button>
               </div>
               <div class='col-3 px-md-0 '>
-                <button type="button" class="btn btn-primary" onclick="joinSpecificRoom()">Join room</button>
-              </div>
-              <div class="col px-md-0">
-                <textarea placeholder="room id" class="md-textarea form-control px-md-1" id="join_room_name_input" rows="1"></textarea>
+                <button type="button" class="btn btn-primary" onclick="quitGame()">Quit game</button>
               </div>
             </div>
 
@@ -37,6 +34,18 @@
           <div class='col-6'>
             <canvas id="canvas" width="600", height="600"></canvas>
           </div> 
+          <div class="col-2">
+            <table class="table">
+              <thead >
+                <tr>
+                  <th>Player</th>
+                  <th>Color</th>
+                </tr>
+              </thead>
+              <tbody class="player_table">
+              </tbody>
+            </table>
+          </div>
         </div>
 </div>
 
