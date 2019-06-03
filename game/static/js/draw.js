@@ -2,7 +2,7 @@ var CANVAS_WIDTH = 600;
 var CANVAS_HEIGHT = 600;
 var PLAYERS = [];
 var PLAYER_COLORS = ['red', 'green', 'yellow', 'blue', 'cyan', 'magenta'];
-var PLAYER_SIZE = 30;
+var PLAYER_SIZE = 20;
 function init() {
   window.requestAnimationFrame(draw);
 }
