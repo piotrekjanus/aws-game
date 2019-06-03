@@ -12,3 +12,4 @@ colyseus-examples/node_modules
 eb-virt/*
 eb-virt/
 game-server/package-lock.json
+game/autoconfig.py
