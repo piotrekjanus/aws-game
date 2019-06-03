@@ -172,9 +172,8 @@ function updatePlayerInfo()
 
 window.setInterval(updateRooms, 1000);
 
-var steeringInterval;
+var steeringIntervals = {};
 var steeringIntervalTime = 60;
-var isSteering = false;
 
 // controls
 window.addEventListener("keydown", function (e) {
@@ -193,25 +192,21 @@ window.addEventListener("keyup", function (e) {
   if( e.repeat ){
     return;
   }
-  if (e.which === 39 || e.which === 37) {
-    stopSteering();
+  if (e.which === 39){
+    stopSteering(1);
+  } else if(e.which === 37) {
+    stopSteering(-1);
   }
 });
 
 function startSteering(direction){
-  if( isSteering ){
-    stopSteering(); 
-  }
-  isSteering = true;
-  steeringInterval = window.setInterval(function(){
+  steeringIntervals[direction] = window.setInterval(function(){
     if( room ){
       room.send({ direction: direction });
-      console.log('turn turn');
     }
   }, steeringIntervalTime);
 }
 
-function stopSteering(){
-  clearInterval(steeringInterval);
-  isSteering = false;
+function stopSteering(direction){
+  clearInterval(steeringIntervals[direction]);
 }

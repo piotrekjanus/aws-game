@@ -48,6 +48,17 @@ export class Player extends Schema {
         this.trail.push( new Position(this.x, this.y) );
     }
 
+    clearTrace(){
+        this.trail = new ArraySchema<Position>();
+    }
+
+    resetPos(){
+        this.x = 100 + Math.floor(Math.random() * 400);
+        this.y = 100 + Math.floor(Math.random() * 400);
+        this.direction_x = 0;
+        this.direction_y = -1;
+    }
+
     changeDirection(direction : number){
         let angle = Math.PI / 72 * direction;
         let sin = Math.sin(angle);
@@ -67,7 +78,11 @@ export class State extends Schema {
     players = new MapSchema<Player>();
 
     createPlayer (id: string, username) {
-        let color = Object.keys(this.players).length;
+        let players_arr = Object.values(this.players);
+        let color = 0;
+        if( players_arr.length > 0){
+            color = 1 - players_arr[0].color; // 1 or 0
+        }
         this.players[ id ] = new Player(username, color);
     }
 
@@ -101,6 +116,17 @@ export class GameRoom extends Room<State> {
         console.log("StateHandlerRoom created!", options);
         this.setSimulationInterval((deltaTime) => this.update(deltaTime));
         this.setState(new State());
+    }
+
+    restart(){
+        Object.values(this.state.players).forEach(function (player){
+            if( player.trail.length > 0){
+                player.clearTrace();
+                player.resetPos();                                
+            }
+        });
+        this.countdown = 3;
+        this.gameState = GameState.Countdown;
     }
 
     update (deltaTime) {
@@ -210,7 +236,7 @@ export class GameRoom extends Room<State> {
     }
 
     isAlreadyConnected(username){
-        console.log('is not already connected: ' + username);
+        console.log('is already connected? : ' + username);
         return Object.values(this.state.players).some(function(player){
             return player.username == username;
         });
@@ -219,7 +245,7 @@ export class GameRoom extends Room<State> {
     onJoin (client, options) {
         this.state.createPlayer(client.sessionId, options.username);
         if(this.clients.length == 2){
-            this.gameState = GameState.Countdown
+            this.restart();
         }
     }
 
