@@ -16,6 +16,7 @@ function addHandlers(room){
       // listen to patches coming from the server
       console.log('new player!' + player);
       PLAYERS[sessionId] = player;
+      updateRooms();
       updatePlayerInfo();
     }
 
@@ -40,6 +41,7 @@ function addHandlers(room){
         // TODO, display results
         // message.gameResults == loser id (client.id is a thing or something like that)
         GameOver(message.gameResults);
+        updateRooms();
       }
       else{
         CountDown('');
@@ -72,7 +74,20 @@ function GameOver(results){
 function ShowResults(results)
 {
   let label = document.getElementById("gameres");
-  label.innerHTML = results;
+  if(results == 'winner')
+  {
+    label.innerHTML = 'You win';
+  }
+  else if(results == 'looser')
+  {
+    label.innerHTML = 'You lose';
+  }
+  else
+  {
+    label.innerHTML = results;
+  }
+  
+  
 }
 
 function getScore(message, players){
@@ -119,6 +134,7 @@ function quitGame(){
     PLAYERS = {};
     updatePlayerInfo();
     ShowResults('');
+    updateRooms();
   }
 }
 
@@ -180,7 +196,7 @@ function updatePlayerInfo()
   oldTbody.parentNode.replaceChild(newTbody, oldTbody);
 }
 
-window.setInterval(updateRooms, 1000);
+// window.setInterval(updateRooms, 1000);
 
 var steeringIntervals = {};
 var steeringIntervalTime = 60;
