@@ -1,7 +1,7 @@
 #!/bin/bash
   
 srv_name='zatackaserverpostgress'
-cfg_file='djangosrv'
+cfg_file='djangosrv2'
 
 yes n | eb init $srv_name > /dev/null
 eb create --cfg $cfg_file "${srv_name}-env"

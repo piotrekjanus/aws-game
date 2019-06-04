@@ -1,0 +1,42 @@
+EnvironmentConfigurationMetadata:
+  Description: autoscaling depends on CPU
+  DateCreated: '1559665981000'
+  DateModified: '1559665981000'
+Platform:
+  PlatformArn: arn:aws:elasticbeanstalk:eu-central-1::platform/Docker running on 64bit Amazon Linux/2.12.11
+OptionSettings:
+  aws:elasticbeanstalk:command:
+    BatchSize: '30'
+    BatchSizeType: Percentage
+  AWSEBLoadBalancer.aws:elb:listener:80:
+    ListenerProtocol: TCP
+    InstanceProtocol: TCP
+  aws:elb:policies:
+    ConnectionDrainingEnabled: true
+  aws:elasticbeanstalk:application:environment:
+    PORT: '6969'
+  AWSEBCloudwatchAlarmLow.aws:autoscaling:trigger:
+    BreachDuration: '1'
+    LowerThreshold: '25'
+    MeasureName: CPUUtilization
+    Period: '1'
+    Unit: Percent
+  aws:elb:loadbalancer:
+    CrossZone: true
+  aws:elasticbeanstalk:environment:
+    ServiceRole: aws-elasticbeanstalk-service-role
+    LoadBalancerType: classic
+  aws:elasticbeanstalk:healthreporting:system:
+    SystemType: enhanced
+  aws:autoscaling:launchconfiguration:
+    IamInstanceProfile: aws-elasticbeanstalk-ec2-role
+    EC2KeyName: test_ec2_key
+  aws:autoscaling:updatepolicy:rollingupdate:
+    RollingUpdateType: Health
+    RollingUpdateEnabled: true
+  AWSEBCloudwatchAlarmHigh.aws:autoscaling:trigger:
+    UpperThreshold: '75'
+EnvironmentTier:
+  Type: Standard
+  Name: WebServer
+AWSConfigurationTemplateVersion: 1.1.0.0

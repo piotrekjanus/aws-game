@@ -1,0 +1,46 @@
+EnvironmentConfigurationMetadata:
+  Description: autoscaling depends on CPU
+  DateCreated: '1559666018000'
+  DateModified: '1559666018000'
+Platform:
+  PlatformArn: arn:aws:elasticbeanstalk:eu-central-1::platform/Python 3.6 running on 64bit Amazon Linux/2.8.3
+OptionSettings:
+  aws:elasticbeanstalk:command:
+    BatchSize: '30'
+    BatchSizeType: Percentage
+  aws:elb:policies:
+    ConnectionDrainingEnabled: true
+  AWSEBCloudwatchAlarmLow.aws:autoscaling:trigger:
+    BreachDuration: '1'
+    LowerThreshold: '25'
+    MeasureName: CPUUtilization
+    Period: '1'
+    Unit: Percent
+  aws:elb:loadbalancer:
+    CrossZone: true
+  aws:elasticbeanstalk:environment:
+    ServiceRole: aws-elasticbeanstalk-service-role
+  aws:elasticbeanstalk:healthreporting:system:
+    SystemType: enhanced
+  aws:autoscaling:launchconfiguration:
+    IamInstanceProfile: aws-elasticbeanstalk-ec2-role
+  aws:rds:dbinstance:
+    DBPassword: 1HasloDoBazy1
+    DBEngine: postgres
+    DBUser: zatackaDbUser
+  aws:autoscaling:updatepolicy:rollingupdate:
+    RollingUpdateType: Health
+    RollingUpdateEnabled: true
+  AWSEBRDSDatabase.aws:rds:dbinstance:
+    MultiAZDatabase: true
+    DBDeletionPolicy: Snapshot
+  AWSEBCloudwatchAlarmHigh.aws:autoscaling:trigger:
+    UpperThreshold: '75'
+EnvironmentTier:
+  Type: Standard
+  Name: WebServer
+Extensions:
+  RDS.EBConsoleSnippet:
+    Order: null
+    SourceLocation: https://s3.eu-central-1.amazonaws.com/elasticbeanstalk-env-resources-eu-central-1/eb_snippets/rds/rds.json
+AWSConfigurationTemplateVersion: 1.1.0.0
