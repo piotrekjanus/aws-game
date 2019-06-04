@@ -3,9 +3,9 @@ var host = window.document.location.host.replace(/:.*/, '');
 var port = 6969
 // var client = new Colyseus.Client(location.protocol.replace("http", "ws") + host + ':' + port);
 console.log('connecting to host: ' + config.game_host);
-var client = new Colyseus.Client("ws://" + config.game_host);
+ var client = new Colyseus.Client("ws://" + config.game_host);
 
-var room;
+ var room;
 
 function addHandlers(room){
 
@@ -30,6 +30,7 @@ function addHandlers(room){
 
     room.onMessage.add( function (message){
       if(message.isCountdown){
+        ShowResults('');
         let current = message.countdown;
         
         console.log('countdown: ' +  (current==1));
@@ -62,8 +63,16 @@ function GameOver(results){
   console.log('GAME OVER!');
   usernames = Object.values(room.state.players).map(function(x){return x.username;});
   console.log(usernames);
-  console.log(room.state.players)
+  console.log(room.state.players);
+  
   getScore(results, usernames);
+  ShowResults(results);
+}
+
+function ShowResults(results)
+{
+  let label = document.getElementById("gameres");
+  label.innerHTML = results;
 }
 
 function getScore(message, players){
@@ -109,6 +118,7 @@ function quitGame(){
     room = null;
     PLAYERS = {};
     updatePlayerInfo();
+    ShowResults('');
   }
 }
 
