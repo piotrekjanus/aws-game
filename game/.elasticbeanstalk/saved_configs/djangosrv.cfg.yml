@@ -19,7 +19,7 @@ OptionSettings:
     IamInstanceProfile: aws-elasticbeanstalk-ec2-role
   aws:rds:dbinstance:
     DBPassword: 1HasloDoBazy1
-    DBEngine: mysql
+    DBEngine: postgres
     DBUser: zatackaDbUser
   aws:autoscaling:updatepolicy:rollingupdate:
     RollingUpdateType: Health

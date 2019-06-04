@@ -1,6 +1,6 @@
 #!/bin/bash
   
-srv_name='zatackaserversec'
+srv_name='zatackaserverpostgress'
 cfg_file='djangosrv'
 
 yes n | eb init $srv_name > /dev/null
