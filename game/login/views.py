@@ -4,12 +4,13 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.utils.html import strip_tags
 # Create your views here.
+from .models import OwnRegisterForm
 from django.contrib.auth.decorators import login_required
 
 
 def register_view(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = OwnRegisterForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, 'Account created for {}'.format(request.POST['username']))
@@ -18,7 +19,7 @@ def register_view(request):
             mess = list(form.errors.get_json_data().values())
             messages.error(request, mess[0][0]['message'])
     else:
-        form = UserCreationForm()
+        form = OwnRegisterForm()
     context = {'form': form}
     return render(request, 'login/register.html', context)
 

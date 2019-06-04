@@ -3,9 +3,9 @@ var host = window.document.location.host.replace(/:.*/, '');
 var port = 6969
 // var client = new Colyseus.Client(location.protocol.replace("http", "ws") + host + ':' + port);
 console.log('connecting to host: ' + config.game_host);
-var client = new Colyseus.Client("ws://" + config.game_host);
+ var client = new Colyseus.Client("ws://" + config.game_host);
 
-var room;
+ var room;
 
 function addHandlers(room){
 
@@ -16,6 +16,7 @@ function addHandlers(room){
       // listen to patches coming from the server
       console.log('new player!' + player);
       PLAYERS[sessionId] = player;
+      updateRooms();
       updatePlayerInfo();
     }
 
@@ -30,6 +31,7 @@ function addHandlers(room){
 
     room.onMessage.add( function (message){
       if(message.isCountdown){
+        ShowResults('');
         let current = message.countdown;
         
         console.log('countdown: ' +  (current==1));
@@ -39,6 +41,7 @@ function addHandlers(room){
         // TODO, display results
         // message.gameResults == loser id (client.id is a thing or something like that)
         GameOver(message.gameResults);
+        updateRooms();
       }
       else{
         CountDown('');
@@ -62,8 +65,29 @@ function GameOver(results){
   console.log('GAME OVER!');
   usernames = Object.values(room.state.players).map(function(x){return x.username;});
   console.log(usernames);
-  console.log(room.state.players)
+  console.log(room.state.players);
+  
   getScore(results, usernames);
+  ShowResults(results);
+}
+
+function ShowResults(results)
+{
+  let label = document.getElementById("gameres");
+  if(results == 'winner')
+  {
+    label.innerHTML = 'You win';
+  }
+  else if(results == 'looser')
+  {
+    label.innerHTML = 'You lose';
+  }
+  else
+  {
+    label.innerHTML = results;
+  }
+  
+  
 }
 
 function getScore(message, players){
@@ -109,6 +133,8 @@ function quitGame(){
     room = null;
     PLAYERS = {};
     updatePlayerInfo();
+    ShowResults('');
+    updateRooms();
   }
 }
 
@@ -170,7 +196,7 @@ function updatePlayerInfo()
   oldTbody.parentNode.replaceChild(newTbody, oldTbody);
 }
 
-window.setInterval(updateRooms, 1000);
+// window.setInterval(updateRooms, 1000);
 
 var steeringIntervals = {};
 var steeringIntervalTime = 60;

@@ -18,9 +18,9 @@
               <table class='table' id = "rooms_table">
                 <thead class="thead-dark">
                   <tr>
-                    <th>Room Id</th>
-                    <th>Numer of Players</th>
-                    <th></th>
+                    <th style="width: 40%">Room Id</th>
+                    <th style="width: 40%">Numer of players</th>
+                    <th style="width: 15%"><span style="float:center;"><i class="fas fa-sync-alt" onclick="updateRooms()"></i></span></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -28,13 +28,18 @@
               </table>  
             </div>
             <div class="span12">
+
                 <h1 class="text-center" id='counter' style=font-size:300px></h1>
               </div>
           </div>
-          <div class='col-6'>
-            <canvas id="canvas" width="600", height="600"></canvas>
+          <div class='col-6' style="min-width: 600px;">
+              <div style="position: absolute; top: 40%; left:20%;">
+                  <h1 id='gameres' style=font-size:100px></h1>
+              </div>
+            <canvas class="position-relative" id="canvas" width="600", height="600"></canvas>
           </div> 
           <div class="col-2">
+            <div class="row">
             <table class="table">
               <thead >
                 <tr>
@@ -45,6 +50,12 @@
               <tbody class="player_table">
               </tbody>
             </table>
+          </div>
+          <div class="row mt-3">
+              <div class="span12">
+                  <h1 class="text-center" id='gameres'></h1>
+                </div>
+          </div>
           </div>
         </div>
 </div>
