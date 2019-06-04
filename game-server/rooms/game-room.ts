@@ -227,8 +227,8 @@ export class GameRoom extends Room<State> {
     }
 
     requestJoin (options, isNewRoom: boolean) {
-        if(options.create && isNewRoom){
-            return true;
+        if(options.create){
+            return isNewRoom;
         } else if(this.clients.length > 0 && !this.isAlreadyConnected(options.username)){
             return true;
         }
@@ -250,6 +250,11 @@ export class GameRoom extends Room<State> {
     }
 
     onLeave (client) {
+        console.log('leave, clients: ' + this.clients.length)
+        if(this.clients.length == 1){
+            this.gameState = GameState.GameOver;
+            this.sendResults(client.sessionId);
+        }
         this.state.removePlayer(client.sessionId);
     }
 
