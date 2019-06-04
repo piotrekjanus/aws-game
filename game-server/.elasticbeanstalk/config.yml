@@ -2,6 +2,10 @@ branch-defaults:
   default:
     environment: gameserver-env
     group_suffix: null
+environment-defaults:
+  gameserver-env:
+    branch: null
+    repository: null
 global:
   application_name: gameserver
   aws:autoscaling:launchconfiguration:
@@ -14,7 +18,7 @@ global:
     PolicyNames: null
     SSLCertificateId: null
   branch: null
-  default_ec2_keyname: null
+  default_ec2_keyname: test_ec2_key
   default_platform: Docker 18.06.1-ce
   default_region: eu-central-1
   include_git_submodules: true

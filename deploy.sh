@@ -1,6 +1,7 @@
 #!/bin/bash
 
-cd game_server
-./deploy.sh
-cd ../game && ./deploy.sh
+cd game-server && \
+./deploy.sh && \
+cd ../game && \
+./deploy.sh && \
 cd ..
