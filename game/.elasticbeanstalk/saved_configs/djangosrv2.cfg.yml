@@ -1,6 +1,7 @@
 EnvironmentConfigurationMetadata:
-  DateCreated: '1559382431000'
-  DateModified: '1559382431000'
+  Description: autoscaling depends on CPU
+  DateCreated: '1559666018000'
+  DateModified: '1559666018000'
 Platform:
   PlatformArn: arn:aws:elasticbeanstalk:eu-central-1::platform/Python 3.6 running on 64bit Amazon Linux/2.8.3
 OptionSettings:
@@ -9,6 +10,12 @@ OptionSettings:
     BatchSizeType: Percentage
   aws:elb:policies:
     ConnectionDrainingEnabled: true
+  AWSEBCloudwatchAlarmLow.aws:autoscaling:trigger:
+    BreachDuration: '1'
+    LowerThreshold: '25'
+    MeasureName: CPUUtilization
+    Period: '1'
+    Unit: Percent
   aws:elb:loadbalancer:
     CrossZone: true
   aws:elasticbeanstalk:environment:
@@ -27,6 +34,8 @@ OptionSettings:
   AWSEBRDSDatabase.aws:rds:dbinstance:
     MultiAZDatabase: true
     DBDeletionPolicy: Snapshot
+  AWSEBCloudwatchAlarmHigh.aws:autoscaling:trigger:
+    UpperThreshold: '75'
 EnvironmentTier:
   Type: Standard
   Name: WebServer
