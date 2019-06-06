@@ -1,1 +1,1 @@
-var config = {"game_host": "gameserver-env.qkkkwremjt.eu-central-1.elasticbeanstalk.com"};
+var config = {"game_host": "localhost:6969"};
