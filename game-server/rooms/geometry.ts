@@ -26,7 +26,7 @@ function onLine(l1 : Line, p : Point) {   //check whether p is on the line or no
 
 function direction(a : Point, b: Point, c: Point) {
    let val = (b.y-a.y)*(c.x-b.x)-(b.x-a.x)*(c.y-b.y);
-   if( val === 0){
+   if( Math.abs(val) < 1e-5){
       return 0;
    }
    if(val < 0){
@@ -43,32 +43,7 @@ export function isIntersect(l1 : Line, l2 : Line) {
    let dir4 = direction(l2.p1, l2.p2, l1.p2);
    
    if(dir1 != dir2 && dir3 != dir4){
-      console.log('[geometry] intersect 1')
       return true; //they are intersecting
    }
-   /*
-   if(dir1 == 0 && onLine(l1, l2.p1)){ //when p2 of line2 are on the line1
-      console.log('[geometry] intersect 2')
-      return true;
-   }
-
-   if(dir2 == 0 && onLine(l1, l2.p2)){ //when p1 of line2 are on the line1
-      console.log('[geometry] intersect 3')
-      return true;
-   }
-   console.log('intersect 4');
-   console.log(l2);
-   console.log(l1.p1);
-   console.log(dir3);
-   if(dir3 == 0 && onLine(l2, l1.p1)){ //when p2 of line1 are on the line2
-      console.log('[geometry] intersect 4')
-      return true;
-   }
-
-   if(dir4 == 0 && onLine(l2, l1.p2)){ //when p1 of line1 are on the line2
-      console.log('[geometry] intersect 5')
-      return true;
-   }
-     */    
    return false;
 }

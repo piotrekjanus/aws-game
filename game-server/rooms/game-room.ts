@@ -37,6 +37,8 @@ export class Player extends Schema {
     @type("string")
     username = "unknown";
 
+    turn_angle = Math.PI / 36;
+
     constructor(username : string, color : number){
         super();
         console.log('creating player : ', username);
@@ -60,7 +62,7 @@ export class Player extends Schema {
     }
 
     changeDirection(direction : number){
-        let angle = Math.PI / 72 * direction;
+        let angle = this.turn_angle * direction;
         let sin = Math.sin(angle);
         let cos = Math.cos(angle);
         this.direction_x = this.direction_x * cos - this.direction_y * sin;
@@ -106,7 +108,7 @@ export class GameRoom extends Room<State> {
 
     maxClients = 2;
     increaseTrailIter = 0;
-    trailIncreaseInterval = 20;
+    trailIncreaseInterval = 15;
     gameState = GameState.WaitingForPlayers;
     countdown = 3;
     countdownInterval = 100;
@@ -172,44 +174,24 @@ export class GameRoom extends Room<State> {
 
     checkIntersections(x1 : number, y1: number, x2 : number, y2: number, playerId : string){
         let newLine = new Line(x1, y1, x2, y2);
-        let intersects = false;
-        Object.keys(this.state.players).forEach(function (key){
-            // some previous line already intersected
-            if( intersects ){
-                return;
-            }
+        return Object.keys(this.state.players).some(function (key){
 
             let player = this.state.players[key];
 
-            if( key != playerId && player.trail.length > 0 ){
-                let start = player.trail[player.trail.length - 1];
-                let trailLine = new Line(start.x, start.y , player.x, player.y);
-                intersects = intersects || isIntersect(trailLine, newLine);
-                if( intersects){
-                    return;
+            if( key === playerId ){
+                console.log('[INTERSECTION] self inflicted harm!')
+                return isTrailIntersect(newLine, player.trail.slice(0,-1));
+            } else{
+                if( player.trail.length > 0 ){
+                    let start = player.trail[player.trail.length - 1];
+                    let trailLine = new Line(start.x, start.y, player.x, player.y);
+                    if( isIntersect(trailLine, newLine)){
+                        return true;
+                    }
                 }
+                return isTrailIntersect(newLine, player.trail);
             }
-
-            for(let i = 0; i < player.trail.length - 1; i++ ){
-                let start = player.trail[i];
-                let stop = player.trail[i + 1];
-                if( key == playerId && stop.x == player.x && stop.y == player.y){
-                    continue;
-                }
-                let trailLine = new Line(start.x, start.y , stop.x, stop.y);
-                intersects = intersects || isIntersect(trailLine, newLine);
-                if( intersects ){
-                    console.log('intersects debug')
-                    console.log(key)
-                    console.log(playerId)
-                    console.log(newLine.p1.x + ' ' + newLine.p1.y + ' ' + newLine.p2.x + ' ' + newLine.p2.y)
-                    console.log(trailLine.p1.x + ' ' + trailLine.p1.y + ' ' + trailLine.p2.x + ' ' + trailLine.p2.y)
-                    console.log('intersects debug - end')
-                }
-            }
-            
         }.bind(this));
-        return intersects;
     }
 
     checkIfOutOfBounds(x : number, y: number){
@@ -229,7 +211,7 @@ export class GameRoom extends Room<State> {
     requestJoin (options, isNewRoom: boolean) {
         if(options.create){
             return isNewRoom;
-        } else if(this.clients.length > 0 && !this.isAlreadyConnected(options.username)){
+        } else if(this.clients.length == 1 && !this.isAlreadyConnected(options.username)){
             return true;
         }
         return false;
@@ -251,7 +233,7 @@ export class GameRoom extends Room<State> {
 
     onLeave (client) {
         console.log('leave, clients: ' + this.clients.length)
-        if(this.clients.length == 1){
+        if(this.gameState != GameState.GameOver && this.clients.length == 1){
             this.gameState = GameState.GameOver;
             this.sendResults(client.sessionId);
         }
@@ -266,4 +248,21 @@ export class GameRoom extends Room<State> {
     onDispose () {
         console.log("Dispose GameRoom");
     }
+}
+
+
+export function isTrailIntersect(newLine : Line, trail : ArraySchema<Position>){
+     for(let i = 0; i < trail.length - 1; i++ ){
+        let start = trail[i];
+        let stop = trail[i + 1];
+        let trailLine = new Line(start.x, start.y , stop.x, stop.y);
+        if( isIntersect(trailLine, newLine) ){
+            console.log('intersects debug')
+            console.log(newLine.p1.x + ' ' + newLine.p1.y + ' ' + newLine.p2.x + ' ' + newLine.p2.y)
+            console.log(trailLine.p1.x + ' ' + trailLine.p1.y + ' ' + trailLine.p2.x + ' ' + trailLine.p2.y)
+            console.log('intersects debug - end')
+            return true;
+        }
+    }
+    return false;
 }

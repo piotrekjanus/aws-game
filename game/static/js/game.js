@@ -59,6 +59,12 @@ function CountDown(number){
   } else{
     counter.innerText = number;
   }
+
+  if(number == 3){
+    stopSteering(1);
+    stopSteering(-1);
+    console.log('clearing steering on start');
+  }
 }
 
 function GameOver(results){
@@ -69,6 +75,9 @@ function GameOver(results){
   
   getScore(results, usernames);
   ShowResults(results);
+  stopSteering(1);
+  stopSteering(-1);
+  console.log('clearing steering');
 }
 
 function ShowResults(results)
