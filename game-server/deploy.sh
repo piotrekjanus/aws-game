@@ -1,7 +1,7 @@
 #!/bin/bash
   
 srv_name='gameserver'
-cfg_file='gameserver2'
+cfg_file='gameservert3'
 
 yes n | eb init $srv_name > /dev/null
 eb create --cfg $cfg_file "${srv_name}-env"
